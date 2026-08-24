@@ -120,8 +120,8 @@ The product is described as a local-first spatial visualization system. No medic
 ## References
 
 - [Apple visionOS](https://developer.apple.com/visionos/)
-- [Unity development for visionOS](https://docs.unity3d.com/current/Manual/visionOS.html)
-- [Unity IL2CPP](https://docs.unity3d.com/current/Manual/scripting-backends-il2cpp.html)
+- [Unity development for visionOS](https://docs.unity3d.com/6000.0/Documentation/Manual/visionOS.html)
+- [Unity IL2CPP](https://docs.unity3d.com/6000.0/Documentation/Manual/scripting-backends-il2cpp.html)
 
 ## Contact
 
