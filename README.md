@@ -1,119 +1,138 @@
 # receptionOS Visualizer
 
-Client-delivered Apple Vision Pro workspace for local inspection and measurement of aligned 3D scan data.
+**A client-delivered Apple Vision Pro workspace for local inspection and measurement of aligned 3D scan data.**
 
 `visionOS` · `SwiftUI` · `Unity 6` · `C#` · `URP` · `Metal` · `IL2CPP` · `arm64`
 
-- **My role:** end-to-end product architecture, native visionOS integration, Unity runtime, rendering, spatial tools, validation and release stabilization
-- **Accepted release:** `2.1.5 / Build 155`
-- **Device:** Apple Vision Pro, tested and accepted on physical hardware
-- **Public scope:** architecture and device behavior are documented here; the client application source remains private
+| My role | Platform | Delivered | Public scope |
+|---|---|---|---|
+| End-to-end product architecture, native integration, Unity runtime, rendering, spatial tools and release stabilization | Apple Vision Pro | `2.1.5 / Build 155`, accepted on physical hardware | Architecture, engineering decisions and de-identified device media; client source remains private |
 
-## On-device demo
+## Outcome
+
+I independently built receptionOS Visualizer from an early proof of concept into a complete spatial product integrated into a client workflow. It imports scanner-derived files locally, reconstructs aligned multi-model compositions and gives each model role a rendering path consistent with what that data represents.
+
+The delivered application supports:
+
+- local PLY, texture and alignment-sidecar import;
+- multiple visible models in one aligned spatial composition;
+- semantic roles for Face, upper jaw, lower jaw and CBCT;
+- role-aware rendering and bounded calibration;
+- native multi-window inspection, model management and onboarding;
+- geometry-level surface snapping and cross-model measurement;
+- deterministic synchronization between the native shell and Unity runtime;
+- Polish and English product UI.
+
+| Native product shell | Import and role assignment | Spatial onboarding |
+|---|---|---|
+| ![Native visionOS workspace navigation](media/native-workspace-navigation.jpg) | ![Imported demonstration jaw with role assignment](media/import-role-assignment.jpg) | ![On-device onboarding beside the main workspace](media/workspace-onboarding.jpg) |
+
+These are direct Apple Vision Pro captures from the delivered workflow, not simulator mock-ups.
+
+## On-device workflows
+
+### Cross-model surface measurement
+
+[![Surface-snapped measurement on a dental model](media/demo-03-preview.jpg)](media/demo-03-surface-measurement.mp4)
+
+**[Open the 10-second measurement video](media/demo-03-surface-measurement.mp4)**
+
+Each ruler endpoint snaps independently to the closest eligible triangle surface. In an aligned composition, the endpoints may belong to different models while the distance remains expressed in one shared source-scale context. The runtime keeps the identity of both attached surfaces and invalidates the measurement when its composition context is broken.
 
 ### Spatial inspection and direct model interaction
 
 [![Spatial inspection and model interaction](media/demo-02-preview.jpg)](media/demo-02-spatial-inspection.mp4)
 
-**[Open the 24-second video](media/demo-02-spatial-inspection.mp4)**
+**[Open the 24-second spatial inspection video](media/demo-02-spatial-inspection.mp4)**
+
+The user can move between a close surface inspection and the broader aligned composition without turning the scene into a fixed presentation. Hand interaction, model state and native windows remain part of one product workflow.
 
 ### Aligned Face, jaw and CBCT composition
 
 [![Aligned Face, jaw and CBCT composition](media/demo-01-preview.jpg)](media/demo-01-aligned-face-jaw-cbct.mp4)
 
-**[Open the 9-second video](media/demo-01-aligned-face-jaw-cbct.mp4)**
+**[Open the 9-second aligned-composition video](media/demo-01-aligned-face-jaw-cbct.mp4)**
 
-## The engineering problem
+The Face surface, jaws and CBCT-derived geometry are separate files. Their shared scale and optional alignment transforms must remain meaningful after import; otherwise a visually plausible overlay can still be spatially wrong.
 
-A scan does not become a dependable spatial object simply because its triangles render.
+## From prototype to delivered system
 
-The application had to import scanner-derived geometry, preserve semantic model roles and alignment, maintain source scale across separate files, render Face, oral and CBCT data through different visual assumptions, coordinate native visionOS windows with an embedded Unity runtime and support measurements between surfaces belonging to different models.
+What began as a native visionOS and RealityKit proof of concept moved through a Unity plus PolySpatial bounded-volume prototype and into an intentional production hybrid. PolySpatial accelerated early spatial iteration; the delivered system needed native product ownership and direct control over large-mesh processing, shaders and lifecycle.
 
-The delivered workspace provides:
+That evolution was driven by constraints rather than framework preference:
 
-- local PLY, texture and alignment-sidecar import;
-- multiple visible models in one aligned composition;
-- role-aware rendering for Face, oral scans and CBCT;
-- native multi-window inspection and calibration tools;
-- geometry-level closest-point snapping for spatial measurement;
-- deterministic lifecycle behavior across native and Unity state;
-- Polish and English product UI.
-
-## My engineering scope
-
-I worked across the complete system:
-
-- product and runtime architecture;
-- SwiftUI windows, Files integration, localization and visionOS lifecycle;
-- Objective-C++ and JSON bridge design;
-- Unity model state, scene operations and spatial interaction;
-- defensive PLY parsing and validation;
-- role-aware URP/Metal rendering and Face performance stabilization;
-- aligned composition logic and cross-model measurement;
-- automated tests, export validation, signing checks and physical-device release acceptance.
+1. **Native Swift and RealityKit prototype:** validated the Apple Vision Pro interaction concept and local-file workflow.
+2. **Unity plus PolySpatial prototype:** accelerated spatial interaction and bounded-volume experimentation.
+3. **SwiftUI plus Unity URP/Metal hybrid:** separated native product concerns from the high-control 3D runtime required for imported scan data.
 
 ## Hybrid by design
 
-The application separates responsibilities rather than forcing the entire product into one framework.
+The application gives each layer a clear owner.
 
 - **Swift 6 and SwiftUI** own native windows, Files integration, localization, privacy-facing UI and visionOS lifecycle.
-- **Objective-C++ and JSON** form an explicit protocol between the native shell and Unity.
-- **Unity 6000.3.19f1 and C#** own scan import, mesh state, transforms, spatial tools and rendering logic.
+- **Objective-C++ and JSON** form a versioned command-and-state protocol between the native shell and Unity.
+- **Unity 6000.3.19f1 and C#** own import, semantic model state, transforms, spatial tools and rendering logic.
 - **URP and Metal** provide the real-time graphics path on Apple Vision Pro.
 - **IL2CPP** converts managed Unity assemblies to C++ for ahead-of-time arm64 deployment through Apple's toolchain.
 
-Bridge operations carry request identity and complete through terminal acknowledgement, postcondition checks and a published state snapshot. This prevents a stale native lifecycle effect from silently mutating a newer Unity scene.
+The bridge is treated as a protocol, not a loose collection of callbacks. Operations carry request identity and complete through terminal acknowledgement, postcondition checks and a published state snapshot. Startup commands are queued until the runtime is ready, while stale lifecycle effects are prevented from mutating a newer scene.
 
-## Import, rendering and spatial meaning
+## Three engineering problems that defined the product
 
-The importer handles ASCII and binary little-endian PLY, positions, triangles, normals, vertex colors, texture coordinates, external PNG/JPEG appearance data and optional `.matrix4` alignment sidecars. Semantic roles include Face, upper jaw, lower jaw and CBCT.
+### 1. Scanner interoperability
 
-Validation runs before expensive mesh allocation. Accepted limits include 512 MB per input file, 1.5 million vertices, 3 million triangles and 10 models in one workspace.
+The importer handles ASCII and binary little-endian PLY, positions, triangles, normals, vertex colors, texture coordinates, external PNG or JPEG appearance data and optional `.matrix4` alignment sidecars.
 
-Different roles then follow different rendering paths:
+Import is treated as a validation pipeline, not a file-open shortcut. Geometry, appearance data, role metadata and optional alignment sidecars are checked before expensive mesh allocation, then published into one deterministic model state. Accepted limits include 512 MB per input file, 1.5 million vertices, 3 million triangles and 10 models in one workspace.
 
-- Face rendering preserves source texture information while applying bounded color statistics and GPU-side naturalization.
-- Oral scans combine scanner color with controlled cavity, depth, ambient-occlusion and material response.
-- CBCT uses a separate profile so later calibration cannot silently change the accepted bone baseline.
+### 2. Role-aware rendering
 
-The ruler operates on imported triangle surfaces, not model origins or bounding boxes. A BVH accelerates closest-point queries, while each endpoint remembers the model surface to which it is attached. Models in one aligned composition share a measurement context, so one point can attach to a tooth and the other to a separate Face surface without forcing both through one model transform.
+A Face scan, an oral scan and CBCT-derived geometry do not share one visual truth.
+
+- **Face rendering** preserves source texture information while applying bounded color statistics and GPU-side naturalization.
+- **Oral rendering** combines scanner color with controlled cavity, depth, ambient-occlusion and material response.
+- **CBCT rendering** uses a separate profile so later calibration cannot silently change the accepted bone baseline.
+
+Three experimental tooth-color controls remain disabled because the available color mask is not scanner-independent anatomical segmentation. Keeping the accepted visual baseline intact was more responsible than exposing controls that looked convincing on one scan but could alter gingiva or artifacts on another.
+
+### 3. Shared scale and measurement
+
+The ruler operates on imported triangle surfaces, not model origins or bounding boxes. A BVH accelerates closest-point queries, while each endpoint remembers the model surface to which it is attached.
+
+For a standalone model, distance is evaluated in that model's source-space context. For an aligned composition, every eligible model shares one measurement context, allowing one point to attach to a tooth and the other to a separate Face surface without forcing both through the transform of one arbitrarily active model.
 
 ## What physical-device testing changed
 
 The simulator did not expose every production failure.
 
-- A full Face-atlas correction on the CPU triggered the Apple Vision Pro watchdog. The accepted path bounds CPU statistics and moves per-pixel naturalization to the GPU.
-- A native window and singleton-runtime race produced stale lifecycle completions. Reducer-style state with explicit run and effect identity made startup and reconnection deterministic.
-- Rendering improvements once changed an already accepted visual baseline. The accepted zero-settings appearance is now treated as regression evidence, not as a value later features may reinterpret.
+- **Build 149, Face-processing watchdog:** a full CPU atlas correction blocked long enough to trigger the Apple Vision Pro watchdog. The accepted path bounds CPU statistics and moves per-pixel naturalization to the GPU.
+- **Build 151, lifecycle race:** a native window and singleton Unity runtime produced stale startup completions. Reducer-style state with explicit run and effect identity made startup and reconnection deterministic.
+- **Visual-baseline regression:** a later rendering improvement changed an already accepted CBCT appearance. The zero-settings V7 / Build 148 look became immutable regression evidence rather than a value future features could reinterpret.
 
-## Relevance to immersive research systems
+Those failures changed the architecture. They were not papered over as device-specific edge cases.
 
-The same properties that make this product stable also matter when an immersive application becomes experimental apparatus:
+## Validation and delivery evidence
 
-- deterministic scene and lifecycle state support repeatable conditions;
-- explicit coordinate and scale semantics protect spatial variables;
-- immutable visual baselines reduce uncontrolled stimulus variation;
-- physical-device profiling prevents simulator-only conclusions;
-- limitations are exposed instead of being hidden behind plausible-looking output.
-
-This is a visualization product, not a completed perception experiment. It demonstrates the engineering foundation on which controlled immersive research can be built.
-
-## Validation
-
-The accepted build recorded **36,115 authored lines** across Swift, Objective-C++, C#, shaders and tests, excluding generated and exported code.
+The accepted release contained **36,115 authored lines** across Swift, Objective-C++, C#, shaders and tests, excluding generated and exported code.
 
 Validation included:
 
-- 101 Unity EditMode tests and 33 PlayMode tests;
+- **101 Unity EditMode tests** and **33 PlayMode tests**;
 - Swift 6 / XROS strict compilation;
 - clean fail-closed Unity-to-Xcode export;
 - unsigned and signed builds;
 - codesign, plist, target-membership, multi-scene and privacy checks;
 - acceptance of the exact build on physical Apple Vision Pro hardware.
 
+## Relevance to immersive research systems
+
+When an immersive application becomes experimental apparatus, scene state, coordinate scale, rendering baselines and device performance become controlled variables rather than implementation details.
+
+receptionOS Visualizer demonstrates that foundation: deterministic lifecycle state, explicit spatial semantics, immutable visual references, physical-device profiling and visible limitations. It is a visualization product, not a completed perception experiment, but the same engineering discipline is required before spatial behavior can support a controlled study.
+
 ## Scope and confidentiality
 
-This repository contains no application source, exported Xcode project, patient data, raw scans, private fixtures, signing material or client-confidential release assets.
+Portfolio media is limited to de-identified demonstration views supplied for public use. The repository contains no identifying patient metadata, raw private scans, clinical records, application source, exported Xcode project, signing material or client-confidential release assets.
 
 The product is described as a local-first spatial visualization system. No medical-device certification, diagnostic-accuracy or clinical-outcome claim is made.
 
