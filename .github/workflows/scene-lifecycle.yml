@@ -1,0 +1,23 @@
+name: scene-lifecycle tests
+
+on:
+  push:
+    paths:
+      - 'code/scene-lifecycle/**'
+      - '.github/workflows/scene-lifecycle.yml'
+  pull_request:
+    paths:
+      - 'code/scene-lifecycle/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the tests
+        working-directory: code/scene-lifecycle
+        run: swift test
