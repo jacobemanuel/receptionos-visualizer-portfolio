@@ -8,6 +8,13 @@ An XR app that shows a patient's face scan, jaw scans and CBCT aligned in 3D, wi
 |---|---|---|---|
 | End-to-end product architecture, native integration, Unity runtime, rendering, spatial tools and release stabilization | Apple Vision Pro | `2.1.5 / Build 155`, accepted on physical hardware | Architecture, engineering decisions and de-identified device media (client source stays private) |
 
+## In short
+
+- **The problem.** The client had a patient's face scan, jaw scans and CBCT, and a headset, but no way to see them together in 3D or to measure across them.
+- **My part.** I took the app on my own from an early proof of concept to the release delivered to the client: the architecture, the native SwiftUI shell, the Unity runtime, rendering, the measuring tools and the release work.
+- **The result.** Version 2.1.5, build 155, was accepted on the physical headset. Up to 10 scans with up to 3 million triangles each load into one aligned scene, and the ruler measures across them on the exact scan surface.
+- **The evidence.** The screenshots and recordings on this page come from the headset, and [a code sample from the app](code/scene-lifecycle) has seven tests that run in CI. The app's source stays private with the client, and there is no public statement from the client about the acceptance.
+
 ## What shipped
 
 The client already had the scans and the headset but no workflow to use them together. I took receptionOS Visualizer on my own from an early proof of concept to the app delivered to the client.
