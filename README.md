@@ -1,6 +1,6 @@
 # receptionOS Visualizer
 
-An XR app that shows a patient's face scan, jaw scans and CBCT aligned in 3D, with measurements on the scan surfaces. I built it for a client as a SwiftUI and Unity hybrid.
+An XR app that puts a patient's face scan, jaw scans and CBCT into one aligned 3D scene at true scale, to explore by hand on the headset: grab any part, see through layers or cut them open, correct the colour and measure on the scan surface. Everything runs on the device. I built it for a client as a SwiftUI and Unity hybrid.
 
 `visionOS` · `SwiftUI` · `Unity 6` · `C#` · `URP` · `Metal` · `IL2CPP` · `arm64`
 
@@ -10,9 +10,9 @@ An XR app that shows a patient's face scan, jaw scans and CBCT aligned in 3D, wi
 
 ## In short
 
-- **The problem.** The client had a patient's face scan, jaw scans and CBCT, and a headset, but no way to see them together in 3D or to measure across them.
-- **My part.** I took the app on my own from an early proof of concept to the release delivered to the client: the architecture, the native SwiftUI shell, the Unity runtime, rendering, the measuring tools and the release work.
-- **The result.** Version 2.1.5, build 155, was accepted on the physical headset. Up to 10 scans with up to 3 million triangles each load into one aligned scene, and the ruler measures across them on the exact scan surface.
+- **The problem.** The client had a patient's face scan, jaw scans and CBCT, and a headset, but no way to see them together in 3D, work with them by hand or measure across them.
+- **My part.** I took the app on my own from an early proof of concept to the release delivered to the client: the architecture, the native SwiftUI shell, the Unity runtime, rendering, the spatial tools and the release work.
+- **The result.** Version 2.1.5, build 155, was accepted on the physical headset. Up to 10 scans with up to 3 million triangles each load into one aligned scene that keeps the patient's real proportions. Any part can be grabbed and turned by hand, layers can be made see-through or cut with a clipping plane, colour casts can be corrected and a ruler measures on the scan surface. Patient sessions are kept in a database on the headset, and nothing needs the internet.
 - **The evidence.** The screenshots and recordings on this page come from the headset, and [a code sample from the app](code/scene-lifecycle) has seven tests that run in CI. The app's source stays private with the client, and there is no public statement from the client about the acceptance.
 
 ## What shipped
