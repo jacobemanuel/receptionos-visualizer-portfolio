@@ -16,7 +16,7 @@ An XR app that puts a patient's face scan, jaw scans and CBCT into one aligned 3
 
 - **The problem.** receptionOS had a patient's face scan, jaw scans and CBCT, and a headset, but no way to see them together in 3D, work with them by hand or measure across them.
 - **My part.** I took the app on my own from an early proof of concept to the release delivered to receptionOS: the architecture, the native SwiftUI shell, the Unity runtime, rendering, the spatial tools and the release work.
-- **The result.** Version 2.1.5, build 155, was accepted on the physical headset. Up to 10 scans with up to 3 million triangles each load into one aligned scene that keeps the patient's real proportions. Any part can be grabbed and turned by hand, layers can be made see-through or cut with a clipping plane, colour casts can be corrected and a ruler measures on the scan surface. Patient sessions are kept in a database on the headset, and nothing needs the internet.
+- **The result.** Version 2.1.5, build 155, was accepted on the physical headset. Up to 10 scans with up to 3 million triangles each load into one aligned scene that keeps the patient's real proportions. Any part can be grabbed and turned by hand, layers can be made see-through or cut with a clipping plane, the face texture is mapped to look photorealistic, without the scanner's colour casts, and a ruler measures on the scan surface. Patient sessions are kept in a database on the headset, and nothing needs the internet.
 - **The evidence.** The screenshots and recordings on this page come from the headset, and [a code sample from the app](code/scene-lifecycle) has seven tests that run in CI. The app's source stays private with receptionOS.
 
 ## What shipped
@@ -43,11 +43,13 @@ These were captured on the physical headset. Acceptance was decided on the devic
 
 ## On-device workflows
 
-### Face texture naturalization and calibration
+### Photorealistic face texture and calibration
 
-| The face scan with its colour cast corrected | The calibration controls on the headset |
+| The face scan with the new photorealistic texture mapping | The calibration controls on the headset |
 |---|---|
-| ![A friend's face scan on the headset in a real room, with natural skin colour after the correction. The objects around it are blurred](media/face-naturalized.jpg) | ![Face texture calibration controls on the headset](media/face-calibration-controls.jpg) |
+| ![A friend's face scan on the headset in a real room. The new texture mapping makes it look photorealistic. The objects around it are blurred](media/face-photoreal.jpg) | ![Face texture calibration controls on the headset](media/face-calibration-controls.jpg) |
+
+I took the face texture and its mapping onto the scan to a new level of quality, so on the headset the face looks photorealistic.
 
 Scanner textures can come in with a strong color cast. The accepted renderer keeps the original appearance available and calculates bounded statistics for the imported scan. It applies naturalization per pixel on the GPU instead of baking a new atlas on the CPU. The user can switch between Auto, Original and Naturalized modes and then make bounded manual corrections to temperature, tint, exposure and tonal response.
 
