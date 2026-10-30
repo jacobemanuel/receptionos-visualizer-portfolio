@@ -1,23 +1,27 @@
 # receptionOS Visualizer
 
-An XR app that puts a patient's face scan, jaw scans and CBCT into one aligned 3D scene at true scale, to explore by hand on the headset: grab any part, see through layers or cut them open, correct the colour and measure on the scan surface. Everything runs on the device. I built it for a client as a SwiftUI and Unity hybrid.
+An XR app that puts a patient's face scan, jaw scans and CBCT into one aligned 3D scene at true scale, to explore by hand on the headset: grab any part, see through layers or cut them open, correct the colour and measure on the scan surface. Everything runs on the device. I built it for [receptionOS](https://receptionos.com/) as a SwiftUI and Unity hybrid.
 
 `visionOS` · `SwiftUI` · `Unity 6` · `C#` · `URP` · `Metal` · `IL2CPP` · `arm64`
 
 | My role | Platform | Delivered | Public scope |
 |---|---|---|---|
-| End-to-end product architecture, native integration, Unity runtime, rendering, spatial tools and release stabilization | Apple Vision Pro | `2.1.5 / Build 155`, accepted on physical hardware | Architecture, engineering decisions and de-identified device media (client source stays private) |
+| End-to-end product architecture, native integration, Unity runtime, rendering, spatial tools and release stabilization | Apple Vision Pro | `2.1.5 / Build 155`, accepted on physical hardware | Architecture, engineering decisions and recordings from the device (the app's source stays with receptionOS) |
+
+![A hand holds a see-through window over a face scan on the headset, onto the jaw and teeth from the CBCT, then pulls it wide](media/face-window.gif)
+
+*A see-through window from the face scan into the CBCT, on the headset.*
 
 ## In short
 
-- **The problem.** The client had a patient's face scan, jaw scans and CBCT, and a headset, but no way to see them together in 3D, work with them by hand or measure across them.
-- **My part.** I took the app on my own from an early proof of concept to the release delivered to the client: the architecture, the native SwiftUI shell, the Unity runtime, rendering, the spatial tools and the release work.
+- **The problem.** receptionOS had a patient's face scan, jaw scans and CBCT, and a headset, but no way to see them together in 3D, work with them by hand or measure across them.
+- **My part.** I took the app on my own from an early proof of concept to the release delivered to receptionOS: the architecture, the native SwiftUI shell, the Unity runtime, rendering, the spatial tools and the release work.
 - **The result.** Version 2.1.5, build 155, was accepted on the physical headset. Up to 10 scans with up to 3 million triangles each load into one aligned scene that keeps the patient's real proportions. Any part can be grabbed and turned by hand, layers can be made see-through or cut with a clipping plane, colour casts can be corrected and a ruler measures on the scan surface. Patient sessions are kept in a database on the headset, and nothing needs the internet.
-- **The evidence.** The screenshots and recordings on this page come from the headset, and [a code sample from the app](code/scene-lifecycle) has seven tests that run in CI. The app's source stays private with the client, and there is no public statement from the client about the acceptance.
+- **The evidence.** The screenshots and recordings on this page come from the headset, and [a code sample from the app](code/scene-lifecycle) has seven tests that run in CI. The app's source stays private with receptionOS.
 
 ## What shipped
 
-The client already had the scans and the headset but no workflow to use them together. I took receptionOS Visualizer on my own from an early proof of concept to the app delivered to the client.
+receptionOS already had the scans and the headset but no workflow to use them together. I took receptionOS Visualizer on my own from an early proof of concept to the app delivered to them.
 
 It imports scanner-derived files locally and rebuilds aligned multi-model compositions. Face, oral-scan and CBCT data each go through their own role-specific render path. What the app does:
 
@@ -152,6 +156,6 @@ The scene-lifecycle reducer from the Build 151 fix is in [`code/scene-lifecycle`
 
 ## Scope and confidentiality
 
-The media in this portfolio is limited to de-identified demonstration views supplied for public use. This repo contains no identifying patient metadata, raw private scans, clinical records, exported Xcode project, signing material or client-confidential release assets. The only application source is the small code sample in `code/scene-lifecycle`.
+receptionOS agreed to be named here and to the recordings on this page. The face in the recordings is a friend's demonstration scan, shown with consent. This repo contains no patient data, raw private scans, clinical records, exported Xcode project, signing material or confidential release assets. The only application source is the small code sample in `code/scene-lifecycle`.
 
 I describe the product as a local-first spatial visualization system. No medical-device certification, diagnostic-accuracy or clinical-outcome claim is made.
