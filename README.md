@@ -8,9 +8,9 @@ An XR app that puts a patient's face scan, jaw scans and CBCT into one aligned 3
 |---|---|---|---|
 | End-to-end product architecture, native integration, Unity runtime, rendering, spatial tools and release stabilization | Apple Vision Pro | `2.1.5 / Build 155`, accepted on physical hardware | Architecture, engineering decisions and recordings from the device (the app's source stays with receptionOS) |
 
-![A hand holds a see-through window over a face scan on the headset, onto the jaw and teeth from the CBCT, then pulls it wide](media/face-window.gif)
+![A hand pulls a see-through plane through a face scan on the headset. The face opens onto the jaw and teeth from the CBCT and then disappears](media/face-plane.gif)
 
-*A see-through window from the face scan into the CBCT, on the headset.*
+*A see-through plane pulled by hand through the face scan on the headset.*
 
 ## In short
 
@@ -45,7 +45,9 @@ These were captured on the physical headset. Acceptance was decided on the devic
 
 ### Face texture naturalization and calibration
 
-![Face texture calibration controls on the headset](media/face-calibration-controls.jpg)
+| The face scan with its colour cast corrected | The calibration controls on the headset |
+|---|---|
+| ![A friend's face scan on the headset in a real room, with natural skin colour after the correction. The objects around it are blurred](media/face-naturalized.jpg) | ![Face texture calibration controls on the headset](media/face-calibration-controls.jpg) |
 
 Scanner textures can come in with a strong color cast. The accepted renderer keeps the original appearance available and calculates bounded statistics for the imported scan. It applies naturalization per pixel on the GPU instead of baking a new atlas on the CPU. The user can switch between Auto, Original and Naturalized modes and then make bounded manual corrections to temperature, tint, exposure and tonal response.
 
