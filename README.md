@@ -8,9 +8,9 @@ An XR app that puts a patient's face scan, jaw scans and CBCT into one aligned 3
 |---|---|---|---|
 | End-to-end product architecture, native integration, Unity runtime, rendering, spatial tools and release stabilization | Apple Vision Pro | `2.1.5 / Build 155`, accepted on physical hardware | Architecture, engineering decisions and recordings from the device (the app's source stays with receptionOS) |
 
-![A hand pulls a see-through plane through a face scan on the headset. The face opens onto the jaw and teeth from the CBCT and then disappears](media/face-plane.gif)
+![A hand holds a see-through window at the lips of a face scan on the headset, opens it onto the jaw and teeth from the CBCT and pulls it on past the jaw until the face is gone](media/face-window-long.gif)
 
-*A see-through plane pulled by hand through the face scan on the headset.*
+*A see-through window from the face scan into the CBCT, pulled past the jaw, on the headset.*
 
 ## In short
 
